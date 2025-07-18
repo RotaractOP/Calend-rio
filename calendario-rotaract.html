@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendário Interativo - Rotaract Club Ouro Preto 2025-26</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals & Rotary Blue -->
+    <!-- Application Structure Plan: A estrutura da aplicação é um calendário interativo com uma navegação horizontal por meses. Essa abordagem foi escolhida porque o relatório original é cronológico, e um fluxo de navegação por linha do tempo é o mais intuitivo para o usuário. O usuário clica em um mês para carregar dinamicamente o conteúdo correspondente (foco e atividades), tornando a exploração rápida e focada, sem a necessidade de rolar por um documento longo. Uma seção separada no final apresenta as dicas de planejamento de forma clara. -->
+    <!-- Visualization & Content Choices: O relatório é qualitativo, sem dados quantitativos, portanto, não foram usados gráficos. O objetivo principal é organizar e informar. A apresentação escolhida foi uma linha do tempo interativa (botões de navegação) que atualiza uma seção de conteúdo de texto via JavaScript. A interação principal é o clique nos meses. Foram usados ícones de texto (Unicode) para enriquecer visualmente os temas mensais. A nova funcionalidade LLM permite gerar ideias de eventos baseadas no tema do mês, adicionando uma camada de interação e utilidade. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f7f4;
+        }
+        .active-month {
+            background-color: #005daa !important;
+            color: white !important;
+            font-weight: 700;
+        }
+        .nav-container::-webkit-scrollbar {
+            display: none;
+        }
+        .nav-container {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <div class="container mx-auto p-4 md:p-8 max-w-5xl">
+        
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-[#003da5]">Calendário Rotário 2025-2026</h1>
+            <p class="text-xl text-gray-600 mt-2">Rotaract Club Ouro Preto</p>
+        </header>
+
+        <main>
+            <section id="calendar-section" class="bg-white p-6 rounded-2xl shadow-lg">
+                <div class="mb-6">
+                    <p class="text-gray-700">
+                        Bem-vindo ao calendário interativo do Ano Rotário 2025-2026. Esta ferramenta foi projetada para ajudar os membros a visualizar e planejar as atividades ao longo do ano. Navegue pelos meses abaixo para explorar os temas do Rotary International e as sugestões de projetos e ações para o nosso clube.
+                    </p>
+                </div>
+
+                <nav id="month-navigation" class="nav-container flex overflow-x-auto border-b-2 border-gray-200 pb-2 mb-6">
+                    <!-- Os botões dos meses serão inseridos aqui pelo JS -->
+                </nav>
+
+                <div id="content-display" class="min-h-[300px] transition-opacity duration-500">
+                    <!-- O conteúdo do mês selecionado será inserido aqui pelo JS -->
+                </div>
+            </section>
+
+            <section id="planning-tips" class="mt-12">
+                <h2 class="text-2xl font-bold text-center mb-6 text-[#003da5]">Dicas para o Planejamento</h2>
+                <div class="text-center mb-6">
+                     <p class="text-gray-700 max-w-3xl mx-auto">
+                        Além do calendário temático, um bom planejamento é a chave para um ano rotário de sucesso. Utilize estas dicas para organizar as reuniões, projetos e a comunicação interna do clube, garantindo um ano produtivo e de grande impacto.
+                    </p>
+                </div>
+                <div id="tips-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- As dicas serão inseridas aqui pelo JS -->
+                </div>
+            </section>
+        </main>
+
+        <footer class="text-center mt-12 py-4 border-t">
+            <p class="text-gray-500 text-sm">&copy; 2025-2026 Rotaract Club Ouro Preto | Desenvolvido para um ano de sucesso.</p>
+        </footer>
+    </div>
+
+    <script>
+        const calendarData = [
+            { month: "Julho", year: 2025, icon: '🚀', theme: "Mês da Liderança e Posse", focus: "Transição de gestão, planejamento estratégico do ano, integração de novos membros da diretoria.", activities: ["Reunião de Posse da Nova Diretoria (Presidente 2025-26 e sua equipe).", "Reuniões de Planejamento Estratégico da Diretoria (definição de metas, projetos, orçamento).", "Reunião de Companheirismo para integração da nova gestão e despedida da anterior.", "Divulgação do plano de trabalho anual para os membros."] },
+            { month: "Agosto", year: 2025, icon: '👥', theme: "Mês da Expansão e Quadro Associativo", focus: "Recrutamento e retenção de membros, fortalecimento do quadro associativo.", activities: ["Campanha de Recrutamento de Novos Membros (divulgação em universidades, escolas, mídias sociais).", "Eventos de Companheirismo abertos para convidados.", "Sessão de Orientação para Novos Membros (história do Rotary/Rotaract, estrutura, benefícios).", "Mentoria para membros mais novos."] },
+            { month: "Setembro", year: 2025, icon: '📚', theme: "Mês da Educação Básica e Alfabetização", focus: "Projetos voltados para o acesso à educação, combate ao analfabetismo, apoio a escolas.", activities: ["Projeto de arrecadação de livros e material escolar.", "Voluntariado em escolas ou bibliotecas comunitárias (reforço escolar, contação de histórias).", "Palestra sobre a importância da educação ou desafios da alfabetização na comunidade.", "Apoio a iniciativas locais de educação."] },
+            { month: "Outubro", year: 2025, icon: '💼', theme: "Mês do Desenvolvimento Econômico e Comunitário", focus: "Projetos que promovam o crescimento econômico local, empreendedorismo e desenvolvimento sustentável da comunidade.", activities: ["Workshop de empreendedorismo ou finanças para jovens.", "Apoio a pequenos negócios locais (divulgação, consultoria voluntária).", "Projeto de capacitação profissional para a comunidade.", "Ações de melhoria de espaços públicos (praças, jardins)."] },
+            { month: "Novembro", year: 2025, icon: '🌍', theme: "Mês da Fundação Rotária", focus: "Conscientização sobre a Fundação Rotária, arrecadação de fundos para seus programas.", activities: ["Palestra sobre a Fundação Rotária e seus impactos globais (Pólio Plus, Bolsas Rotary pela Paz).", "Evento de arrecadação de fundos para a Fundação Rotária (jantar beneficente, leilão, venda de produtos).", "Divulgação da importância de contribuir para a Fundação."] },
+            { month: "Dezembro", year: 2025, icon: '❤️', theme: "Mês da Prevenção e Tratamento de Doenças", focus: "Projetos de saúde, conscientização sobre doenças, campanhas de prevenção.", activities: ["Campanha de doação de sangue.", "Palestra sobre saúde mental, diabetes, hipertensão ou outras doenças relevantes.", "Ações de conscientização sobre higiene e saneamento básico.", "Visita a hospitais ou lares de idosos (com atividades recreativas)."] },
+            { month: "Janeiro", year: 2026, icon: '👔', theme: "Mês dos Serviços Profissionais", focus: "Desenvolvimento da ética profissional, promoção de carreiras, mentoria e networking.", activities: ["Rodas de conversa com profissionais de diversas áreas.", "Workshop de elaboração de currículo e preparação para entrevistas.", "Visitas técnicas a empresas ou instituições.", "Projeto de mentoria entre membros ou com profissionais do Rotary."] },
+            { month: "Fevereiro", year: 2026, icon: '🕊️', theme: "Mês da Paz e Prevenção/Resolução de Conflitos", focus: "Promoção da paz, diálogo, resolução não-violenta de conflitos.", activities: ["Debate ou palestra sobre temas relacionados à paz e direitos humanos.", "Projeto de conscientização sobre bullying ou cyberbullying.", "Atividades de integração cultural ou intercâmbio.", "Participação em iniciativas locais de promoção da paz."] },
+            { month: "Março", year: 2026, icon: '💧', theme: "Mês dos Recursos Hídricos e Saneamento", focus: "Projetos de conservação da água, saneamento básico, acesso à água potável.", activities: ["Campanha de conscientização sobre o uso racional da água.", "Mutirão de limpeza de rios, córregos ou nascentes.", "Palestras sobre tratamento de água e esgoto.", "Apoio a projetos de acesso à água em comunidades carentes."] },
+            { month: "Abril", year: 2026, icon: '👩‍👧‍👦', theme: "Mês da Saúde Materno-Infantil", focus: "Projetos de apoio à saúde de mães e bebês, redução da mortalidade infantil.", activities: ["Campanha de arrecadação de itens para gestantes e recém-nascidos (fraldas, roupas, produtos de higiene).", "Palestra sobre cuidados na gravidez e primeiros anos de vida do bebê.", "Apoio a instituições que cuidam de mães e crianças.", "Ações de conscientização sobre vacinação infantil."] },
+            { month: "Maio", year: 2026, icon: '🌟', theme: "Mês das Novas Gerações", focus: "Reconhecimento e apoio aos programas de jovens do Rotary (Interact, Rotaract, RYLA, Intercâmbio de Jovens).", activities: ["Evento de integração com o Interact Club local.", "Organização ou participação no RYLA (Rotary Youth Leadership Awards).", "Divulgação dos programas de intercâmbio do Rotary.", "Reconhecimento dos membros do Rotaract e suas contribuições."] },
+            { month: "Junho", year: 2026, icon: '🎉', theme: "Mês dos Grupos de Companheirismo", focus: "Celebração do companheirismo, balanço do ano rotário, preparação para a transição.", activities: ["Reunião de Avaliação do Ano Rotário (balanço dos projetos, metas alcançadas).", "Jantar de Confraternização de Fim de Ano Rotário.", "Preparação para a transição de gestão (passagem de pastas, relatórios).", "Agradecimento aos membros e parceiros."] }
+        ];
+
+        const planningTips = [
+            { icon: '🗓️', title: "Reuniões Regulares", text: "Mantenha um calendário fixo para as reuniões ordinárias do clube (ex: toda segunda-feira, a cada 15 dias)." },
+            { icon: '📋', title: "Reuniões de Diretoria", text: "Agende reuniões mensais ou quinzenais da diretoria para acompanhamento e planejamento." },
+            { icon: '🌐', title: "Eventos Distritais/Nacionais", text: "Fique atento às datas de eventos importantes do Distrito e do Rotary Brasil." },
+            { icon: '🔄', title: "Projetos Contínuos", text: "Alguns projetos podem ser contínuos e não se limitar a um único mês." },
+            { icon: '🧘', title: "Flexibilidade", text: "Este é um guia. Adapte o calendário às oportunidades e necessidades que surgirem." },
+            { icon: '📢', title: "Comunicação", text: "Mantenha todos os membros informados sobre o calendário e as atividades." }
+        ];
+
+        const monthNav = document.getElementById('month-navigation');
+        const contentDisplay = document.getElementById('content-display');
+        const tipsGrid = document.getElementById('tips-grid');
+        let currentMonthIndex = 0;
+
+        function updateContent(index) {
+            const data = calendarData[index];
+            contentDisplay.style.opacity = '0';
+
+            setTimeout(() => {
+                let activitiesHtml = data.activities.map(activity => 
+                    `<li class="flex items-start">
+                        <span class="text-indigo-500 mr-3 mt-1">✓</span>
+                        <span>${activity}</span>
+                    </li>`
+                ).join('');
+
+                contentDisplay.innerHTML = `
+                    <h3 class="text-2xl font-bold mb-2 text-[#003da5]">${data.icon} ${data.theme}</h3>
+                    <p class="text-gray-600 font-medium mb-4">${data.month} de ${data.year}</p>
+                    <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg mb-6">
+                        <h4 class="font-bold text-lg mb-1 text-gray-900">Foco do Mês:</h4>
+                        <p class="text-gray-700">${data.focus}</p>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-lg mb-3 text-gray-900">Sugestões de Atividades:</h4>
+                        <ul class="space-y-2 text-gray-700 list-inside">
+                            ${activitiesHtml}
+                        </ul>
+                    </div>
+                    <button id="generate-ideas-btn" class="mt-6 px-6 py-3 bg-[#005daa] text-white rounded-full shadow-md hover:bg-[#003da5] transition-colors duration-300 flex items-center justify-center mx-auto">✨ Gerar Ideias de Eventos</button>
+                    <div id="loading-indicator" class="mt-4 text-gray-600 text-center hidden">Carregando ideias...</div>
+                    <div id="generated-ideas" class="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200 text-gray-700 hidden"></div>
+                `;
+                contentDisplay.style.opacity = '1';
+                
+                document.getElementById('generate-ideas-btn').addEventListener('click', generateEventIdeas);
+                document.getElementById('generated-ideas').classList.add('hidden'); // Esconde ao mudar de mês
+                document.getElementById('loading-indicator').classList.add('hidden'); // Esconde ao mudar de mês
+            }, 200);
+
+            const buttons = monthNav.querySelectorAll('button');
+            buttons.forEach((button, i) => {
+                button.classList.toggle('active-month', i === index);
+            });
+            
+            currentMonthIndex = index;
+        }
+
+        async function generateEventIdeas() {
+            const currentMonthData = calendarData[currentMonthIndex];
+            const loadingIndicator = document.getElementById('loading-indicator');
+            const generatedIdeasDiv = document.getElementById('generated-ideas');
+            const generateButton = document.getElementById('generate-ideas-btn');
+
+            generateButton.disabled = true;
+            loadingIndicator.classList.remove('hidden');
+            generatedIdeasDiv.classList.add('hidden');
+            generatedIdeasDiv.innerHTML = ''; // Limpa conteúdo anterior
+
+            const prompt = `Gere 5 ideias de eventos ou projetos para um Rotaract Club com base no seguinte tema do mês e foco:\n\nTema do Mês: ${currentMonthData.theme}\nFoco: ${currentMonthData.focus}\n\nAs ideias devem ser práticas para um clube de jovens voluntários e alinhadas com os ideais do Rotary. Formate a resposta como uma lista numerada.`;
+            
+            let chatHistory = [];
+            chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+            const payload = { contents: chatHistory };
+            const apiKey = ""; 
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const result = await response.json();
+
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const text = result.candidates[0].content.parts[0].text;
+                    generatedIdeasDiv.innerHTML = `<h4 class="font-bold text-lg mb-2">Ideias Geradas:</h4>${text.replace(/\n/g, '<br>')}`;
+                    generatedIdeasDiv.classList.remove('hidden');
+                } else {
+                    generatedIdeasDiv.innerHTML = '<p class="text-red-500">Não foi possível gerar ideias. Tente novamente.</p>';
+                    generatedIdeasDiv.classList.remove('hidden');
+                }
+            } catch (error) {
+                console.error("Erro ao chamar a API Gemini:", error);
+                generatedIdeasDiv.innerHTML = '<p class="text-red-500">Ocorreu um erro ao gerar ideias. Verifique sua conexão.</p>';
+                generatedIdeasDiv.classList.remove('hidden');
+            } finally {
+                loadingIndicator.classList.add('hidden');
+                generateButton.disabled = false;
+            }
+        }
+
+        function init() {
+            calendarData.forEach((item, index) => {
+                const button = document.createElement('button');
+                button.className = "whitespace-nowrap flex-shrink-0 text-sm md:text-base text-gray-600 hover:bg-gray-200 py-2 px-4 rounded-t-lg transition-colors duration-300";
+                button.textContent = `${item.month}`;
+                button.dataset.index = index;
+                monthNav.appendChild(button);
+            });
+
+            planningTips.forEach(tip => {
+                const tipCard = `
+                    <div class="bg-white p-6 rounded-lg shadow-md transform hover:scale-105 transition-transform duration-300">
+                        <div class="text-3xl mb-3">${tip.icon}</div>
+                        <h3 class="font-bold text-lg mb-2">${tip.title}</h3>
+                        <p class="text-gray-600 text-sm">${tip.text}</p>
+                    </div>
+                `;
+                tipsGrid.innerHTML += tipCard;
+            });
+            
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = now.getMonth(); 
+
+            // Determina o mês inicial com base na data atual
+            let initialMonthIndex = 0; 
+            if(year === 2025 && month >= 6) { // Julho (mês 6) de 2025 em diante
+                initialMonthIndex = month - 6;
+            } else if (year === 2026 && month <= 5) { // Até Junho (mês 5) de 2026
+                initialMonthIndex = month + 6;
+            }
+            
+            updateContent(initialMonthIndex);
+
+            monthNav.addEventListener('click', (e) => {
+                if (e.target.tagName === 'BUTTON') {
+                    const index = parseInt(e.target.dataset.index);
+                    updateContent(index);
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
